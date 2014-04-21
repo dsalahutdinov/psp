@@ -8,7 +8,9 @@ namespace :psp do
       project: Psp::PathResolver::DEFAULT_PATH_MASK).expand
 
     succeed = Psp::Runner.new(tasks, concurrency: ENV.fetch('JOBS', 5)).run
+    exit_code = succeed ? 0 : 101
 
-    exit(succeed ? 0 : 1)
+    puts "Total exit code: #{exit_code}"
+    exit(exit_code)
   end
 end
