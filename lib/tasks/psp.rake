@@ -7,6 +7,8 @@ namespace :psp do
       plugins: Psp::PathResolver::DEFAULT_PATH_MASK,
       project: Psp::PathResolver::DEFAULT_PATH_MASK).expand
 
-    Psp::Runner.new(tasks, concurrency: ENV.fetch('JOBS', 5), dry_run: true).run
+    succeed = Psp::Runner.new(tasks, concurrency: ENV.fetch('JOBS', 5)).run
+
+    exit(succeed ? 0 : 1)
   end
 end
