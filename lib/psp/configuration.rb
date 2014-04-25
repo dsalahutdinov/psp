@@ -4,6 +4,9 @@ require 'yaml'
 
 module Psp
   module Configuration
+    include Output
+    include Ascii
+
     extend self
 
     def system
@@ -23,7 +26,7 @@ module Psp
       MutexPool[:configurations].synchronize do
         return if defined?(@configurations)
 
-        puts "Loading \e[0;32mdatabase.yml\e[0m configuration"
+        verbose { puts "Loading #{green 'database.yml'} configuration" }
 
         erb = ERB.new(IO.read File.join(ROOT_PATH, 'config', 'database.yml')).result
         @configurations = YAML.load(erb).freeze

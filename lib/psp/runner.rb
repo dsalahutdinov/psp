@@ -5,6 +5,8 @@ require 'active_support/core_ext/array'
 module Psp
   class Runner
     def initialize(collection, options = Hash.new)
+      Output.setup(verbose: options.delete(:verbose))
+
       @dry_run = options.delete(:dry_run)
 
       @manager = Manager.new(collection, options)

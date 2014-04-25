@@ -1,6 +1,6 @@
 module Psp
   module Ascii
-    extend self
+    module_function
 
     def red(text)
       "\e[0;31m#{text}\e[0m"

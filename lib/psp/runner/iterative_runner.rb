@@ -4,21 +4,29 @@ require 'active_support/core_ext/object/try'
 module Psp
   class Runner
     class IterativeRunner
+      include Output
+      include Ascii
+
       def initialize(collection)
         @collection = Array.wrap(collection)
       end
 
       def run(context)
         succeed = @collection.collect do |element|
-          puts "Run \e[0;32m#{extract_name(element)}\e[0m"
+          verbose { puts "Run #{green extract_name(element)}" }
 
-          system("#{context.env} bundle exec rspec #{element} 2>&1")
+          system("#{context.env} bundle exec rspec #{element} #{stderr_to_stdout}")
         end
 
         succeed.all?
       end
 
       private
+      # FIXME : Дублирование
+      def stderr_to_stdout
+        Output.verbose? ? '2>&1' : '2>1'
+      end
+
       def extract_name(element)
         element.match(/(?<name>[\w\_\-]+)\/spec$/)
           .try(:[], :name) || File.basename(element, '.rb')

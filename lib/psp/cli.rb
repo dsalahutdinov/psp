@@ -56,6 +56,10 @@ module Psp
           @runner_options[:dry_run] = true
         end
 
+        parser.on('-v', '--verbose', 'Turn on verbosity') do
+          @runner_options[:verbose] = true
+        end
+
         parser.on_tail('--version', 'Display the version') do
           puts parser.version
           exit

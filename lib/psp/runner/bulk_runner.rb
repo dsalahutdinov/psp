@@ -3,14 +3,23 @@
 module Psp
   class Runner
     class BulkRunner
+      include Output
+      include Ascii
+
       def initialize(collection)
         @collection = Array.wrap(collection)
       end
 
       def run(context)
-        puts "Run \e[0;32m#{extract_name}\e[0m"
+        verbose { puts "Run #{green extract_name}" }
 
-        !!system("#{context.env} bundle exec rspec #{@collection * ' '} 2>&1")
+        !!system("#{context.env} bundle exec rspec #{@collection * ' '} #{stderr_to_stdout}")
+      end
+
+      private
+      # FIXME : Дублирование
+      def stderr_to_stdout
+        Output.verbose? ? '2>&1' : '2>1'
       end
 
       def extract_name
