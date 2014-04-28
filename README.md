@@ -35,6 +35,7 @@ From root of your project
     $   -l, --plugin=<plugin1,...>       Run specified plugins specs
     $   -j, --jobs=<concurrency>         Set runner concurrency
     $       --dry-run                    Check out the allocations
+    $   -v, --verbose                    Turn on verbosity
     $       --version                    Display the version
     $   -h, --help                       You are looking at it
 
