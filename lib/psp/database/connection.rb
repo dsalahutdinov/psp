@@ -4,12 +4,15 @@ require 'active_record'
 module Psp
   module Database
     module Connection
+      include Output
+      include Ascii
+
       extend self
 
       MAX_TIMEOUT_RETRIES = 5
 
       def establish!
-        puts "Connecting to \e[0;32m#{Configuration.system['database']}\e[0m database"
+        verbose { puts "Connecting to #{green database_name} database" }
 
         ActiveRecord::Base.establish_connection(Configuration.system)
       end
@@ -30,6 +33,11 @@ module Psp
         else
           raise
         end
+      end
+
+      private
+      def database_name
+        Configuration.system['database']
       end
     end # module Connection
   end # module Database

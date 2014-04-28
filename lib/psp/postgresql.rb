@@ -2,6 +2,9 @@
 
 module Psp
   module Postgresql
+    include Output
+    include Ascii
+
     extend self
 
     def version
@@ -10,7 +13,7 @@ module Psp
       MutexPool[:postgresql].synchronize do
         return @pg_version if defined?(@pg_version)
 
-        puts "Gathering \e[0;32mPostgreSQL\e[0m version"
+        verbose { puts "Gathering #{green 'PostgreSQL'} version" }
         @pg_version = %x{$(which psql) --version}.match(/\d+\.\d+/)[0].to_f
       end
     end

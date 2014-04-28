@@ -3,6 +3,9 @@
 module Psp
   module Database
     class Context
+      include Output
+      include Ascii
+
       attr_reader :env
       attr_reader :seed
 
@@ -33,7 +36,7 @@ module Psp
 
       private
       def create_database
-        puts Ascii.yellow "SQL => CREATE DATABASE #{@database}"
+        verbose { puts yellow "SQL => CREATE DATABASE #{@database}" }
 
         Connection.with_connection do
           Connection.current.execute <<-SQL
@@ -48,7 +51,7 @@ module Psp
       end
 
       def drop_database
-        puts Ascii.yellow "SQL => DROP DATABASE #{@database}"
+        verbose { puts yellow "SQL => DROP DATABASE #{@database}" }
 
         Connection.with_connection do
           Connection.current.execute <<-SQL
