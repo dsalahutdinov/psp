@@ -13,7 +13,7 @@ module Psp
 
       def run(context)
         succeed = @collection.collect do |element|
-          verbose { puts "Run #{green extract_name(element)}" }
+          puts "Run #{green extract_name(element)}"
 
           system("#{context.env} bundle exec rspec #{element} #{stderr_to_stdout}")
         end
