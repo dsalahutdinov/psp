@@ -11,7 +11,7 @@ module Psp
       end
 
       def run(context)
-        verbose { puts "Run #{green extract_name}" }
+        puts "Run #{green extract_name}"
 
         !!system("#{context.env} bundle exec rspec #{@collection * ' '} #{stderr_to_stdout}")
       end

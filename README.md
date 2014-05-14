@@ -11,7 +11,7 @@ Command line utility for project and plugins spec running.
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Add this line to your application's `Gemfile`:
 
     gem 'psp'
 
@@ -22,6 +22,21 @@ And then execute:
 Or install it yourself as:
 
     $ gem install psp
+
+Ensure that your `test` section in `database.yml` looks like this:
+
+```yaml
+test:
+  adapter: postgresql
+  database: db_name_test<%= ENV['TEST_DATABASE_POSTFIX'] %>
+  username: db_user
+  host: localhost
+  port: 5432
+  pool: 10
+```
+
+Increase the pools size up to `10` and add `<%= ENV['TEST_DATABASE_POSTFIX'] %>`
+to your database name
 
 ## Usage
 
