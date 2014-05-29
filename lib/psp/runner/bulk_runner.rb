@@ -19,7 +19,7 @@ module Psp
       private
       # FIXME : Дублирование
       def stderr_to_stdout
-        Output.verbose? ? '2>&1' : '2>1'
+        "2>&1#{' 1>/dev/null' unless Output.verbose?}"
       end
 
       def extract_name
