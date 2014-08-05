@@ -17,7 +17,11 @@ module Psp
 
           result = system("#{context.env} bundle exec rspec #{element} #{stderr_to_stdout}")
 
-          puts "Finished #{blue extract_name(element)}"
+          if result
+            puts "Finished #{blue extract_name(element)}"
+          else
+            puts red("Finished #{extract_name(element)} with error")
+          end
 
           result
         end
