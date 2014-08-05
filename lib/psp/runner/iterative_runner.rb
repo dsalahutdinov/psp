@@ -15,7 +15,11 @@ module Psp
         succeed = @collection.collect do |element|
           puts "Run #{green extract_name(element)}"
 
-          system("#{context.env} bundle exec rspec #{element} #{stderr_to_stdout}")
+          result = system("#{context.env} bundle exec rspec #{element} #{stderr_to_stdout}")
+
+          puts "Finished #{blue extract_name(element)}"
+
+          result
         end
 
         succeed.all?

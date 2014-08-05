@@ -13,7 +13,11 @@ module Psp
       def run(context)
         puts "Run #{green extract_name}"
 
-        !!system("#{context.env} bundle exec rspec #{@collection * ' '} #{stderr_to_stdout}")
+        result = !!system("#{context.env} bundle exec rspec #{@collection * ' '} #{stderr_to_stdout}")
+
+        puts "Finished #{blue extract_name}"
+
+        result
       end
 
       private
