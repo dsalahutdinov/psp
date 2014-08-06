@@ -2,18 +2,11 @@
 
 module Psp
   class Runner
-    class BulkRunner
-      include Output
-      include Ascii
-
-      def initialize(collection)
-        @collection = Array.wrap(collection)
-      end
-
+    class BulkRunner < BaseRunner
       def run(context)
         puts "Run #{green extract_name}"
 
-        result = !!system("#{context.env} bundle exec rspec #{@collection * ' '} #{stderr_to_stdout}")
+        result = !!system("#{context.env} bundle exec rspec #{rspec_options} #{@collection * ' '} #{stderr_to_stdout}")
 
         if result
           puts "Finished #{blue extract_name}"
@@ -25,10 +18,6 @@ module Psp
       end
 
       private
-      # FIXME : Дублирование
-      def stderr_to_stdout
-        "2>&1#{' 1>/dev/null' unless Output.verbose?}"
-      end
 
       def extract_name
         "files (#{@collection.count})"

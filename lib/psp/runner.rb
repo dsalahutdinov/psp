@@ -1,11 +1,14 @@
 # coding: utf-8
 require 'parallel'
 require 'active_support/core_ext/array'
+require 'active_support/core_ext/hash'
 
 module Psp
   class Runner
     def initialize(collection, options = Hash.new)
       Output.setup(verbose: options.delete(:verbose))
+
+      @runner_options = options.slice(:profile)
 
       @dry_run = options.delete(:dry_run)
 
@@ -24,7 +27,7 @@ module Psp
       Database::Connection.establish!
       succeed = Parallel.map(@manager.allocation, in_threads: @manager.concurrency) do |(batch, runner)|
         in_database_context do |context|
-          runner.new(batch).run(context)
+          runner.new(batch, @runner_options).run(context)
         end
       end
 
