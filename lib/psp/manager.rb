@@ -8,6 +8,7 @@ module Psp
   class Manager
     # FIXME : Коэффициенты подобраны опытным путем. Быть может есть вариант
     #         лучше?
+    # Может быть их стоило вынести в конфиг, а не спрашивать здесь?
     PROJECT_RUNNERS_RATE = 0.13
     PLUGINS_RUNNERS_RATE = 4.9
     DEFAULT_CONCURRENCY = 1

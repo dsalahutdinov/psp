@@ -12,6 +12,7 @@ require 'psp/database/connection'
 require 'psp/database/context'
 require 'psp/manager'
 require 'psp/runner'
+require 'psp/runner/base_runner'
 require 'psp/runner/bulk_runner'
 require 'psp/runner/iterative_runner'
 require 'psp/railtie' if defined?(Rails)

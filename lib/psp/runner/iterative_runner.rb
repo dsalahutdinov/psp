@@ -3,19 +3,12 @@ require 'active_support/core_ext/object/try'
 
 module Psp
   class Runner
-    class IterativeRunner
-      include Output
-      include Ascii
-
-      def initialize(collection)
-        @collection = Array.wrap(collection)
-      end
-
+    class IterativeRunner < BaseRunner
       def run(context)
         succeed = @collection.collect do |element|
           puts "Run #{green extract_name(element)}"
 
-          result = system("#{context.env} bundle exec rspec #{element} #{stderr_to_stdout}")
+          result = !!system("#{context.env} bundle exec rspec #{rspec_options} #{element} #{stderr_to_stdout}")
 
           if result
             puts "Finished #{blue extract_name(element)}"
@@ -30,10 +23,6 @@ module Psp
       end
 
       private
-      # FIXME : Дублирование
-      def stderr_to_stdout
-        "2>&1#{' 1>/dev/null' unless Output.verbose?}"
-      end
 
       def extract_name(element)
         element.match(/(?<name>[\w\_\-]+)\/spec$/)
