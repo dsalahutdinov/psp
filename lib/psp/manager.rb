@@ -9,8 +9,8 @@ module Psp
     # FIXME : Коэффициенты подобраны опытным путем. Быть может есть вариант
     #         лучше?
     # Может быть их стоило вынести в конфиг, а не спрашивать здесь?
-    PROJECT_RUNNERS_RATE = 0.13
-    PLUGINS_RUNNERS_RATE = 4.9
+    PROJECT_RUNNERS_RATE = ENV.fetch('PROJECT_RUNNERS_RATE', 0.13).to_f
+    PLUGINS_RUNNERS_RATE = ENV.fetch('PLUGINS_RUNNERS_RATE', 4.9).to_f
     DEFAULT_CONCURRENCY = 1
 
     attr_reader :concurrency
