@@ -16,11 +16,14 @@ module Psp
       #           :template - String template database name (required)
       #           :seed     - Fixnum unique identifier of your context (optional)
       def initialize(options, &block)
-        @template = options.fetch(:template)
+        @templates = options.fetch(:templates)
         @seed = "#{Process.pid}#{options.fetch(:seed, generate_seed).to_i}"
 
         @env = (ENV_TEMPLATE % @seed).freeze
-        @database = "#{@template}_#{@seed}".freeze
+        @databases = @templates.inject({}) do|h, t|
+          h[t] = "#{Configuration.test_databases[t]['database']}_#{@seed}".freeze
+          h
+        end.freeze
 
         execute(&block) unless block.nil?
       end
@@ -30,45 +33,62 @@ module Psp
         create_database
 
         block.call(self)
-      ensure
+      #ensure
         drop_database
       end
 
       private
       def create_database
-        verbose { puts yellow "SQL => CREATE DATABASE #{@database}" }
+        #binding.pry
+        @templates.each do |template|
+          database = @databases[template]
+          template_database = Configuration.test_databases[template]['database']
 
-        Connection.with_connection do
-          Connection.current.execute <<-SQL
-            DROP DATABASE IF EXISTS #{@database};
-          SQL
+          verbose { puts yellow "SQL => CREATE DATABASE #{database} from #{template_database}" }
 
-          Connection.current.execute <<-SQL
-            CREATE DATABASE #{@database}
-            WITH TEMPLATE = #{@template};
-          SQL
+          #Connection.with_connection(template) do
+            Connection.execute_for template, <<-SQL
+              DROP DATABASE IF EXISTS #{database};
+            SQL
+
+            Connection.execute_for template, <<-SQL
+              CREATE DATABASE #{database}
+              WITH TEMPLATE = #{template_database};
+            SQL
+          #end
         end
       end
 
       def drop_database
-        verbose { puts yellow "SQL => DROP DATABASE #{@database}" }
+        #binding.pry
+        @templates.each do |template|
+        database = @databases[template]
 
-        Connection.with_connection do
-          Connection.current.execute <<-SQL
-            DROP DATABASE IF EXISTS #{@database};
-          SQL
+          verbose { puts yellow "SQL => DROP DATABASE #{database}" }
+
+          #Connection.with_connection(template) do
+            Connection.execute_for template, <<-SQL
+              DROP DATABASE IF EXISTS #{database};
+            SQL
+          #end
         end
       end
 
       def terminate_backends
+        #binding.pry
         pid_column = (Postgresql.version < 9.2) ? 'procpid' : 'pid'
 
-        Connection.with_connection do
-          Connection.current.execute <<-SQL
-            SELECT pg_terminate_backend(#{pid_column})
-            FROM pg_stat_activity
-            WHERE datname = #{Connection.current.quote @template};
-          SQL
+        @templates.each do |template|
+          template_database = Configuration.test_databases[template]['database']
+          database = @databases[template]
+          #Connection.with_connection(template) do
+            connection = Connection.connection_for(template)
+            Connection.execute_for template, <<-SQL
+              SELECT pg_terminate_backend(#{pid_column})
+              FROM pg_stat_activity
+              WHERE datname = #{connection.quote template_database};
+            SQL
+          #end
         end
       end
 

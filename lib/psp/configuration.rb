@@ -9,14 +9,14 @@ module Psp
 
     extend self
 
-    def system
-      load unless defined?(@system)
-      @system
+    def system_databases
+      load unless defined?(@system_databases)
+      @system_databases
     end
 
-    def test
-      load unless defined?(@test)
-      @test
+    def test_databases
+      load unless defined?(@test_databases)
+      @test_databases
     end
 
     private
@@ -30,11 +30,18 @@ module Psp
 
         erb = ERB.new(IO.read File.join(ROOT_PATH, 'config', 'database.yml')).result
         @configurations = YAML.load(erb).freeze
+        #binding.pry
+        @test_databases = @configurations.freeze
+        @system_databases = @test_databases.inject({}) do |h, (k, v)|
+          h[k] = v.merge(
+            'database' => 'postgres',
+            'username' => 'postgres',
+            'schema_search_path' => 'public').freeze
+          h
+        end
 
-        @test = @configurations['test'].freeze
-        @system = @test.merge(
-          'database' => 'postgres',
-          'schema_search_path' => 'public').freeze
+        #verbose { puts @test_databases.inspect }
+        #verbose { puts @system_databases.inspect }
       end
     end
   end # module Configuration

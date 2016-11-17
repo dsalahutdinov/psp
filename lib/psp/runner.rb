@@ -24,7 +24,7 @@ module Psp
 
       return true if dry_run?
 
-      Database::Connection.establish!
+      #Database::Connection.establish!
       succeed = Parallel.map(@manager.allocation, in_threads: @manager.concurrency) do |(batch, runner)|
         in_database_context do |context|
           runner.new(batch, @runner_options).run(context)
@@ -40,7 +40,7 @@ module Psp
     end
 
     def in_database_context(&block)
-      context = Database::Context.new(template: Configuration.test['database'])
+      context = Database::Context.new(templates: ['test', 'test_orders'])
       context.execute { |x| block[x] }
     end
   end # class Runner
